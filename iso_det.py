@@ -10,12 +10,12 @@ sg.theme('Light Brown 3')
 layout = [
 
  [sg.Text('Chose what are expected isotopes (max.6):', font='Helvetica 11', size = (33,1)), sg.VerticalSeparator(pad=None), sg.Text('', size = (2,1)), sg.Text('Enter detector`s response:', font='Helvetica 11')],
- [sg.Checkbox('125I',size = (15,1), key='125I'), sg.Checkbox('44Ti',size = (15,1), key='44Ti'), sg.VerticalSeparator(pad=None), sg.Text('', size = (2,1)), sg.Text('YAG', size = (6,1)), sg.Input('', size = (10,1), key='YAG')],
- [sg.Checkbox('133Xe',size = (15,1), key='133Xe'), sg.Checkbox('243Am',size = (15,1), key='243Am'), sg.VerticalSeparator(pad=None), sg.Text('', size = (2,1)), sg.Text('YAP', size = (6,1)), sg.Input('', size = (10,1), key='YAP')],
- [sg.Checkbox('67Ga (39%)',size = (15,1), key='67Ga (39%)'), sg.Checkbox('133Ba',size = (15,1), key='133Ba'), sg.VerticalSeparator(pad=None), sg.Text('', size = (2,1)), sg.Text('YAM', size = (6,1)), sg.Input('', size = (10,1), key='YAM')],
- [sg.Checkbox('178Ta',size = (15,1), key='178Ta'), sg.Checkbox('153Gd(1) (97.4)',size = (15,1), key='153Gd(1)'), sg.VerticalSeparator(pad=None), sg.Text('', size = (2,1)), sg.Text('Y2O3', size = (6,1)), sg.Input('', size = (10,1), key='Y2O3')],
- [sg.Checkbox('99mTc',size = (15,1), key='99mTc'), sg.Checkbox('153Gd(2) (103.2)',size = (15,1), key='153Gd(2)'), sg.VerticalSeparator(pad=None), sg.Text('', size = (2,1)), sg.Text('Al2O3', size = (6,1)), sg.Input('', size = (10,1), key='Al2O3')],
- [sg.Checkbox('123I',size = (15,1), key='123I'), sg.Checkbox('152Eu',size = (15,1), key='152Eu'), sg.VerticalSeparator(pad=None), sg.Text('', size = (2,1)), sg.Text('BeO', size = (6,1)), sg.Input('', size = (10,1), key='BeO')],
+ [sg.Checkbox('125I',size = (15,1), key='125I'), sg.Checkbox('44Ti',size = (15,1), key='44Ti'), sg.VerticalSeparator(pad=None), sg.Text('', size = (2,1)), sg.Text('YAG', size = (6,1)), sg.Input('1222.131', size = (10,1), key='YAG')],
+ [sg.Checkbox('133Xe',size = (15,1), key='133Xe'), sg.Checkbox('243Am',size = (15,1), key='243Am'), sg.VerticalSeparator(pad=None), sg.Text('', size = (2,1)), sg.Text('YAP', size = (6,1)), sg.Input('1295.733', size = (10,1), key='YAP')],
+ [sg.Checkbox('67Ga (39%)',size = (15,1), key='67Ga (39%)'), sg.Checkbox('133Ba',size = (15,1), key='133Ba'), sg.VerticalSeparator(pad=None), sg.Text('', size = (2,1)), sg.Text('YAM', size = (6,1)), sg.Input('1513.889', size = (10,1), key='YAM')],
+ [sg.Checkbox('178Ta',size = (15,1), key='178Ta'), sg.Checkbox('153Gd(1) (97.4)',size = (15,1), key='153Gd(1)'), sg.VerticalSeparator(pad=None), sg.Text('', size = (2,1)), sg.Text('Y2O3', size = (6,1)), sg.Input('1645.297', size = (10,1), key='Y2O3')],
+ [sg.Checkbox('99mTc',size = (15,1), key='99mTc'), sg.Checkbox('153Gd(2) (103.2)',size = (15,1), key='153Gd(2)'), sg.VerticalSeparator(pad=None), sg.Text('', size = (2,1)), sg.Text('Al2O3', size = (6,1)), sg.Input('166.489', size = (10,1), key='Al2O3')],
+ [sg.Checkbox('123I',size = (15,1), key='123I'), sg.Checkbox('152Eu',size = (15,1), key='152Eu'), sg.VerticalSeparator(pad=None), sg.Text('', size = (2,1)), sg.Text('BeO', size = (6,1)), sg.Input('91.4175', size = (10,1), key='BeO')],
  [sg.Checkbox('111In',size = (15,1), key='111In'), sg.Checkbox('57Co',size = (15,1), key='57Co'), sg.VerticalSeparator(pad=None)],
  [sg.Checkbox('67Ga (21%)',size = (15,1), key='67Ga (21%)'), sg.Checkbox('139Ce',size = (15,1), key='139Ce'), sg.VerticalSeparator(pad=None)],
  [sg.Checkbox('81mKr',size = (15,1), key='81mKr'), sg.Checkbox('109Cd', size=(15,1), key='109Cd'), sg.VerticalSeparator(pad=None)],
@@ -69,8 +69,12 @@ def iso_value(values):
 def linear (Flist,Rlist):
     F = np.array(Flist)
     R = np.array(Rlist)
-    I = linalg.solve(F,R)
-    return I            # resolve system of linear equations
+    if len(F[1]) == len(R):
+        I = linalg.solve(F,R)
+    else:
+        x, residuals, rank, s = linalg.lstsq(F,R, rcond=None)
+        I = x
+    return I    # resolve system of linear equations
 
 def draw_figure(canvas, figure):
     figure_canvas_agg = FigureCanvasTkAgg(figure, canvas)
@@ -140,6 +144,8 @@ while True:
     '67Ga (21%)': '184', '81mKr': '190', '44Ti': '68.9', '243Am': '74.7',
      '133Ba': '81', '109Cd': '88', '153Gd(1)': '97.4', '153Gd(2)': '103.2',
      '152Eu': '121.78', '57Co': '136.5', '139Ce': '165.9'}       # energy of each iso
+
+
     I = linear(F,R)
 
 
@@ -154,10 +160,10 @@ while True:
 
     print("F-matrix",F)
     print("R-Vector",R)
-    print(I)
+    print ("I",I)
     print("V-list", V)
-    res=np.allclose(np.dot(F, I), R)
-    print(res)
+    # res=np.allclose(np.dot(F, I), R)
+    # print(res)
 
     if event == 'Submit':
         x_pos = np.arange(len(V))
@@ -166,7 +172,7 @@ while True:
         plt.ylabel('Інтенсивність')
         plt.title('Джерело випромінювання та Е,кеВ')
         fig = plt.gcf()
-        fig_photo = draw_figure(window['-CANVAS-'].TKCanvas, fig)        
+        fig_photo = draw_figure(window['-CANVAS-'].TKCanvas, fig)
     if event == "Save":
         fname = str(fcount)+"_Chart"
         plt.savefig(fname)
