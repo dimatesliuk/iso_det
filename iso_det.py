@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 
 sg.theme('Light Brown 3')
 layout = [
-
  [sg.Text('Chose what are expected isotopes (max.6):', font='Helvetica 11', size = (33,1)), sg.VerticalSeparator(pad=None), sg.Text('', size = (2,1)), sg.Text('Enter detector`s response:', font='Helvetica 11')],
  [sg.Checkbox('125I',size = (15,1), key='125I'), sg.Checkbox('44Ti',size = (15,1), key='44Ti'), sg.VerticalSeparator(pad=None), sg.Text('', size = (2,1)), sg.Text('YAG', size = (6,1)), sg.Input('', size = (10,1), key='YAG')],
  [sg.Checkbox('133Xe',size = (15,1), key='133Xe'), sg.Checkbox('243Am',size = (15,1), key='243Am'), sg.VerticalSeparator(pad=None), sg.Text('', size = (2,1)), sg.Text('YAP', size = (6,1)), sg.Input('', size = (10,1), key='YAP')],
@@ -21,7 +20,6 @@ layout = [
  [sg.Checkbox('81mKr',size = (15,1), key='81mKr'), sg.Checkbox('109Cd', size=(15,1), key='109Cd'), sg.VerticalSeparator(pad=None)],
  [sg.Button('Submit'), sg.Button('Clear'), sg.Button('Save'), sg.Button('Exit')],
  [sg.Canvas(key='-CANVAS-')]
-
 ]
 
 
@@ -166,7 +164,7 @@ while True:
         plt.ylabel('Інтенсивність')
         plt.title('Джерело випромінювання та Е,кеВ')
         fig = plt.gcf()
-        fig_photo = draw_figure(window['-CANVAS-'].TKCanvas, fig)        
+        fig_photo = draw_figure(window['-CANVAS-'].TKCanvas, fig)
     if event == "Save":
         fname = str(fcount)+"_Chart"
         plt.savefig(fname)
